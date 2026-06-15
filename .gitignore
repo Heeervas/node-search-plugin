@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.env
+*.log
+benchmark_results.real.*
+benchmark_real_search.py
+.cache/
+AGENTS.md
+STATE.md
+TODO.md
+.agents/

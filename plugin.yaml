@@ -1,0 +1,8 @@
+name: node-search
+version: "0.2.0"
+description: "Bounded Markdown metadata+graph prefilter for configured local roots"
+author: Adan
+requires_env: []
+provides_tools:
+  - node_search
+provides_hooks: []
