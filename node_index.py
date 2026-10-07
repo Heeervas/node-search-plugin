@@ -11,6 +11,20 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import yaml
 
+# Spartan Gate: read node-search policy from the current profile scope.
+def _profile_env(name: str) -> str:
+    try:
+        from agent.secret_scope import get_secret
+    except ModuleNotFoundError as exc:
+        if exc.name not in {"agent", "agent.secret_scope"}:
+            raise
+        # Standalone use has no Hermes profile authority.
+        return os.getenv(name, "").strip()
+    # A scoped miss or failed lookup must never borrow the launch profile's policy.
+    return (get_secret(name) or "").strip()
+
+
+
 def _hermes_home() -> Path:
     try:
         from hermes_constants import get_hermes_home
@@ -104,8 +118,8 @@ def _output_options(
 
 def allowed_roots() -> List[Path]:
     """Return configured candidate roots without requiring them to exist."""
-    configured = os.getenv("NODE_SEARCH_ALLOWED_ROOTS", "").strip()
-    legacy = os.getenv("NODE_SEARCH_ROOT", "").strip()
+    configured = _profile_env("NODE_SEARCH_ALLOWED_ROOTS").strip()
+    legacy = _profile_env("NODE_SEARCH_ROOT").strip()
     roots = _split_paths(configured) if configured else []
     if legacy:
         roots.insert(0, Path(legacy).expanduser())
@@ -125,14 +139,14 @@ def default_root() -> Path:
 
 
 def default_cache() -> Path:
-    configured = os.getenv("NODE_SEARCH_CACHE", "").strip()
+    configured = _profile_env("NODE_SEARCH_CACHE").strip()
     if configured:
         return Path(configured).expanduser()
     return _hermes_home() / ".cache" / "hermes" / "node_search" / "index.json"
 
 
 def _root_policy_is_configured() -> bool:
-    return bool(os.getenv("NODE_SEARCH_ALLOWED_ROOTS", "").strip() or os.getenv("NODE_SEARCH_ROOT", "").strip())
+    return bool(_profile_env("NODE_SEARCH_ALLOWED_ROOTS").strip() or _profile_env("NODE_SEARCH_ROOT").strip())
 
 
 def _existing_allowed_roots() -> List[Path]:
