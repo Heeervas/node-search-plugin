@@ -1,5 +1,5 @@
 """
-node-search — Hermes plugin v0.3.0.
+node-search — Hermes plugin v0.3.1.
 Bounded Markdown metadata+graph prefilter for configured local roots.
 """
 from __future__ import annotations

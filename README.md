@@ -1,6 +1,6 @@
 # Node Search 🕸️
 
-Version: `0.3.0`
+Version: `0.3.1`
 
 Hermes Agent plugin exposing `node_search`: a bounded first-pass Markdown/Obsidian metadata and link-graph candidate selector.
 
@@ -27,7 +27,13 @@ It intentionally does **not** search full Markdown bodies in v1. Use normal file
 
 - Hermes Agent with plugin support.
 - Python 3.10+.
-- `PyYAML`.
+- `PyYAML>=6.0,<7`, declared in `plugin.yaml` and installed by Hermes's plugin dependency manager. Hermes core constraints take precedence.
+
+Python 3.10+ describes the standalone indexer; your Hermes release may require a newer Python. The previous empty Python-3.13-only `uv.lock` was not a usable project lock and has been removed. Development tooling is pinned in `requirements-dev.txt`.
+
+## Privacy and execution disclosure
+
+The tool reads configured local Markdown files in full to extract metadata, headings and links, but returns candidate metadata rather than body prose. Default result exclusions are not scan exclusions. The persistent JSON cache contains extracted frontmatter, headings, links and paths, including fields omitted from compact responses; protect it as you would your notes. Old caches are rebuilt automatically after this upgrade. Deleting source notes removes their cached graph data on the next scan of that scope, not immediately. It performs no network requests, shell commands, background work, telemetry, paid/model calls, or credential-store access. Configuration is read through Hermes's active secret scope when available, with environment fallback only in standalone use. Roots and cache locations should be distinct per profile; explicitly sharing a cache path means sharing its stored metadata. Filesystem access is not a sandbox against concurrent hostile filesystem mutation.
 
 ## Installation
 
@@ -203,7 +209,7 @@ python benchmark_node_search.py --repeats 7 \
 ## Development
 
 ```bash
-python -m pip install pytest ruff pyyaml
+python -m pip install -r requirements-dev.txt
 python -m py_compile __init__.py node_index.py benchmark_node_search.py
 ruff check .
 python -m pytest . -q

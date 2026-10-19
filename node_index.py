@@ -176,8 +176,6 @@ def _select_root_for_scope(scope: str | None, root: Path | None) -> Path:
     return default_root()
 
 
-DEFAULT_ROOT = default_root()
-DEFAULT_CACHE = default_cache()
 MAX_RESULTS = 100
 MAX_DEPTH = 2
 MAX_LINKS_PER_NODE = 80
@@ -581,6 +579,9 @@ def build_index(
             }
 
     cache = {} if refresh else _load_cache(cache_path)
+    # Relative note names are meaningful only within the same root and scan scope.
+    if (cache.get("root"), cache.get("base")) != (str(root), _rel(root, base)):
+        cache = {}
     cached_nodes = cache.get("nodes", {}) if isinstance(cache.get("nodes"), dict) else {}
     nodes: Dict[str, Node] = {}
     parsed = reused = 0
@@ -603,13 +604,14 @@ def build_index(
             parsed += 1
 
     cache_has_resolved_graph = bool(cache.get("resolved_graph"))
-    graph_reused = bool(cache_has_resolved_graph and parsed == 0 and len(signature) == len(nodes))
+    graph_reused = bool(cache_has_resolved_graph and parsed == 0 and set(cached_nodes) == set(nodes))
     if not graph_reused:
         _resolve_links(nodes)
     if not graph_reused:
         payload = {
-            "version": 2,
+            "version": 3,
             "root": str(root),
+            "base": _rel(root, base),
             "resolved_graph": True,
             "nodes": {rel: node.to_cache() for rel, node in sorted(nodes.items())},
         }

@@ -8,7 +8,4 @@ __pycache__/
 benchmark_results.real.*
 benchmark_real_search.py
 .cache/
-AGENTS.md
-STATE.md
-TODO.md
-.agents/
+# Public governance and validation are versioned with the plugin.

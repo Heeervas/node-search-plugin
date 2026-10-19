@@ -1,0 +1,118 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_____________________ test_disk_cache_does_not_cross_roots _____________________
+
+tmp_path = PosixPath('/opt/data/cache/scratch/pytest-of-unknown/pytest-21/test_disk_cache_does_not_cross0')
+
+    def test_disk_cache_does_not_cross_roots(tmp_path):
+        cache = tmp_path / "cache.json"
+        a = note(tmp_path / "a", "Note.md", "# Alpha")
+        b = note(tmp_path / "b", "Note.md", "# Bravo")
+        os.utime(b, ns=(a.stat().st_atime_ns, a.stat().st_mtime_ns))
+        index.build_index(root=a.parent, cache_path=cache)
+        result = index.build_index(root=b.parent, cache_path=cache)
+>       assert result["nodes"]["Note.md"].headings == ["Bravo"]
+E       AssertionError: assert ['Alpha'] == ['Bravo']
+E         
+E         At index 0 diff: 'Alpha' != 'Bravo'
+E         Use -v to get more diff
+
+test_catalogue_regressions.py:24: AssertionError
+_____________ test_disk_graph_recomputed_after_deletion[Source.md] _____________
+
+tmp_path = PosixPath('/opt/data/cache/scratch/pytest-of-unknown/pytest-21/test_disk_graph_recomputed_aft0')
+deleted = 'Source.md'
+
+    @pytest.mark.parametrize("deleted", ["Source.md", "Target.md"])
+    def test_disk_graph_recomputed_after_deletion(tmp_path, deleted):
+        root = tmp_path / "notes"
+        cache = tmp_path / "cache.json"
+        note(root, "Source.md", "[[Target]]")
+        note(root, "Target.md", "# Target")
+        first = index.build_index(root=root, cache_path=cache)
+        assert first["nodes"]["Target.md"].incoming_links == ["Source.md"]
+        (root / deleted).unlink()
+        index._PROCESS_INDEX_CACHE.clear()  # Model a new interpreter reading the disk cache.
+        result = index.build_index(root=root, cache_path=cache)
+        if deleted == "Source.md":
+>           assert result["nodes"]["Target.md"].incoming_links == []
+E           AssertionError: assert ['Source.md'] == []
+E             
+E             Left contains one more item: 'Source.md'
+E             Use -v to get more diff
+
+test_catalogue_regressions.py:39: AssertionError
+_____________ test_disk_graph_recomputed_after_deletion[Target.md] _____________
+
+tmp_path = PosixPath('/opt/data/cache/scratch/pytest-of-unknown/pytest-21/test_disk_graph_recomputed_aft1')
+deleted = 'Target.md'
+
+    @pytest.mark.parametrize("deleted", ["Source.md", "Target.md"])
+    def test_disk_graph_recomputed_after_deletion(tmp_path, deleted):
+        root = tmp_path / "notes"
+        cache = tmp_path / "cache.json"
+        note(root, "Source.md", "[[Target]]")
+        note(root, "Target.md", "# Target")
+        first = index.build_index(root=root, cache_path=cache)
+        assert first["nodes"]["Target.md"].incoming_links == ["Source.md"]
+        (root / deleted).unlink()
+        index._PROCESS_INDEX_CACHE.clear()  # Model a new interpreter reading the disk cache.
+        result = index.build_index(root=root, cache_path=cache)
+        if deleted == "Source.md":
+            assert result["nodes"]["Target.md"].incoming_links == []
+        else:
+            link = result["nodes"]["Source.md"].outgoing_links[0]
+>           assert not link.resolved
+E           AssertionError: assert not True
+E            +  where True = Link(raw='[[Target]]', target='Target', alias=None, heading=None, embed=False, resolved_path='Target.md', resolved=True, ambiguous=False, candidates=[]).resolved
+
+test_catalogue_regressions.py:42: AssertionError
+___________________ test_import_does_not_read_scoped_policy ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73e7107a6650>
+
+    def test_import_does_not_read_scoped_policy(monkeypatch):
+        import builtins
+    
+        original = builtins.__import__
+    
+        def guarded(name, *args, **kwargs):
+            if name == "agent.secret_scope":
+                raise AssertionError("profile policy must be read at call time, not import time")
+            return original(name, *args, **kwargs)
+    
+        monkeypatch.setattr(builtins, "__import__", guarded)
+        source = Path(index.__file__).read_text(encoding="utf-8")
+>       exec(compile(source, index.__file__, "exec"), index.__dict__.copy())
+
+test_catalogue_regressions.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+node_index.py:179: in <module>
+    DEFAULT_ROOT = default_root()
+                   ^^^^^^^^^^^^^^
+node_index.py:135: in default_root
+    roots = allowed_roots()
+            ^^^^^^^^^^^^^^^
+node_index.py:121: in allowed_roots
+    configured = _profile_env("NODE_SEARCH_ALLOWED_ROOTS").strip()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+node_index.py:17: in _profile_env
+    from agent.secret_scope import get_secret
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'agent.secret_scope'
+args = ({'__name__': 'node_index', '__doc__': 'Core indexer for node_search: bounded Markdown frontmatter/link graph search.'..., '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x73e710962930>, ...}, None, ('get_secret',), 0)
+kwargs = {}
+
+    def guarded(name, *args, **kwargs):
+        if name == "agent.secret_scope":
+>           raise AssertionError("profile policy must be read at call time, not import time")
+E           AssertionError: profile policy must be read at call time, not import time
+
+test_catalogue_regressions.py:53: AssertionError
+=========================== short test summary info ============================
+FAILED test_catalogue_regressions.py::test_disk_cache_does_not_cross_roots - ...
+FAILED test_catalogue_regressions.py::test_disk_graph_recomputed_after_deletion[Source.md]
+FAILED test_catalogue_regressions.py::test_disk_graph_recomputed_after_deletion[Target.md]
+FAILED test_catalogue_regressions.py::test_import_does_not_read_scoped_policy
+4 failed in 0.51s
