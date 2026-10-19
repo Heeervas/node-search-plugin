@@ -7,11 +7,13 @@ Acceptance owner: repository owner/coordinator. Scope: Node Search catalogue pre
 Run from the repository. Clear launch-profile policy for standalone tests (tests set their own roots); use the existing Hermes development interpreter for the real secret-scope integration test.
 
 ```sh
-env -u NODE_SEARCH_ROOT -u NODE_SEARCH_ALLOWED_ROOTS -u NODE_SEARCH_CACHE python -m pytest . -q --basetemp=/opt/data/profiles/builder/cache/scratch/node-search-pytest
+env -u NODE_SEARCH_ROOT -u NODE_SEARCH_ALLOWED_ROOTS -u NODE_SEARCH_CACHE HERMES_HOME=/opt/data/profiles/builder/cache/scratch/node-search-test-home python -m pytest . -q --basetemp=/opt/data/profiles/builder/cache/scratch/node-search-pytest
 python -m py_compile __init__.py node_index.py benchmark_node_search.py test_catalogue_regressions.py
 ruff check .
-git diff --check
+git diff --check 448d827ef4bdc32efe031c20bf3c315ffc91b351 HEAD
 ```
+
+`--basetemp` alone does not redirect plugin state: the scratch `HERMES_HOME` is required. The handler test also explicitly sets its cache to `tmp_path`; the real A/B/A profile integration test retains its own home overrides. Before committing, check the staged baseline-to-candidate diff as well.
 
 Install pinned tooling from requirements-dev.txt in an isolated writable environment before claiming pinned-tool checks. Verify the declared PyYAML lower bound separately from the core-constrained version. CI retains the Python 3.10–3.12 standalone matrix; local Python 3.14 evidence does not prove that matrix.
 

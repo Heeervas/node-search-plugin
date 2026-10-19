@@ -607,7 +607,6 @@ def build_index(
     graph_reused = bool(cache_has_resolved_graph and parsed == 0 and set(cached_nodes) == set(nodes))
     if not graph_reused:
         _resolve_links(nodes)
-    if not graph_reused:
         payload = {
             "version": 3,
             "root": str(root),

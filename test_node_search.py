@@ -526,6 +526,7 @@ def test_handler_forwards_compact_output_args(tmp_path, monkeypatch):
 
     root = tmp_path / "brain"
     monkeypatch.setenv("NODE_SEARCH_ALLOWED_ROOTS", str(root))
+    monkeypatch.setenv("NODE_SEARCH_CACHE", str(tmp_path / "cache.json"))
     write(root / "A.md", """---
 title: Alpha
 status: open

@@ -13,7 +13,7 @@ tmp_path = PosixPath('/opt/data/cache/scratch/pytest-of-unknown/pytest-21/test_d
         result = index.build_index(root=b.parent, cache_path=cache)
 >       assert result["nodes"]["Note.md"].headings == ["Bravo"]
 E       AssertionError: assert ['Alpha'] == ['Bravo']
-E         
+E
 E         At index 0 diff: 'Alpha' != 'Bravo'
 E         Use -v to get more diff
 
@@ -37,7 +37,7 @@ deleted = 'Source.md'
         if deleted == "Source.md":
 >           assert result["nodes"]["Target.md"].incoming_links == []
 E           AssertionError: assert ['Source.md'] == []
-E             
+E
 E             Left contains one more item: 'Source.md'
 E             Use -v to get more diff
 
@@ -73,20 +73,20 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73e7107a6650>
 
     def test_import_does_not_read_scoped_policy(monkeypatch):
         import builtins
-    
+
         original = builtins.__import__
-    
+
         def guarded(name, *args, **kwargs):
             if name == "agent.secret_scope":
                 raise AssertionError("profile policy must be read at call time, not import time")
             return original(name, *args, **kwargs)
-    
+
         monkeypatch.setattr(builtins, "__import__", guarded)
         source = Path(index.__file__).read_text(encoding="utf-8")
 >       exec(compile(source, index.__file__, "exec"), index.__dict__.copy())
 
-test_catalogue_regressions.py:58: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_catalogue_regressions.py:58:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 node_index.py:179: in <module>
     DEFAULT_ROOT = default_root()
                    ^^^^^^^^^^^^^^
@@ -98,7 +98,7 @@ node_index.py:121: in allowed_roots
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 node_index.py:17: in _profile_env
     from agent.secret_scope import get_secret
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 name = 'agent.secret_scope'
 args = ({'__name__': 'node_index', '__doc__': 'Core indexer for node_search: bounded Markdown frontmatter/link graph search.'..., '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x73e710962930>, ...}, None, ('get_secret',), 0)
