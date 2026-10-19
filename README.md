@@ -41,7 +41,7 @@ Default profile:
 
 ```bash
 mkdir -p ~/.hermes/plugins
-git clone https://github.com/eve-ai-dev/node-search-plugin.git ~/.hermes/plugins/node-search
+git clone https://github.com/Heeervas/node-search-plugin.git ~/.hermes/plugins/node-search
 hermes plugins enable node-search
 ```
 
@@ -49,7 +49,7 @@ Named profile:
 
 ```bash
 mkdir -p ~/.hermes/profiles/<profile>/plugins
-git clone https://github.com/eve-ai-dev/node-search-plugin.git ~/.hermes/profiles/<profile>/plugins/node-search
+git clone https://github.com/Heeervas/node-search-plugin.git ~/.hermes/profiles/<profile>/plugins/node-search
 hermes -p <profile> plugins enable node-search
 ```
 

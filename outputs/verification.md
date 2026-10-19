@@ -1,6 +1,6 @@
 # Local verification — review fixes
 
-Baseline: 448d827ef4bdc32efe031c20bf3c315ffc91b351. Tested implementation commit: c37ea55de68e2f5a51af6291f193fcb06b5ca8f1. Plugin 0.3.1. Acceptance remains BLOCKED by installation/lint/runtime gates and re-review, not by deterministic quality.
+Baseline: 448d827ef4bdc32efe031c20bf3c315ffc91b351. Tested implementation commit: c37ea55de68e2f5a51af6291f193fcb06b5ca8f1. Plugin 0.3.1. Acceptance remains BLOCKED by supported-runtime, PyYAML-floor and fresh dependency-admission gates, not by deterministic quality or independent code review. See outputs/preparation.md for resumed gate evidence.
 
 ## Review findings
 
@@ -29,4 +29,4 @@ bfc8965c2a91c80a5ecdb9646e791119863bdaa8818b508a5869005519e1a2b4  test_node_sear
 
 Earlier denied command (not retried): `uv pip install --python /opt/data/profiles/builder/cache/scratch/node-search-check-env/bin/python 'pytest==8.4.2' 'ruff==0.14.1' 'PyYAML==6.0' 'packaging==25.0'`. OSV/deps.dev/ecosyste.ms threat-intelligence lookups timed out; unattended safety policy denied execution. `command -v ruff` now exits 1. Pinned dev-tool installation, `ruff check .`, Python 3.10–3.12 execution, PyYAML 6.0 floor execution and fresh isolated `hermes plugins validate <candidate> --install-deps` under core constraints remain incomplete. No retry or safety-policy workaround was attempted.
 
-Parent will resume the same independent reviewer for the changed cone. No nested review/delegation. No push, publication, profile policy/config change, paid calls or private scan. Reviewer-created synthetic cache outside scratch was not touched. Later changes limited to evidence/STATE do not change these tested code bytes; proposed catalogue pin is generated after final commit.
+Independent re-review pd_20261019_110105_zas2bl accepted R1/R2/R3 at 4109156b0e6bb305c4b3cb0a73fd29dc99d681fe; no further code changes are required. The incomplete-gates paragraph above records the earlier attempt, not current lint readiness; outputs/preparation.md supersedes it. No nested review/delegation. No push, publication, profile policy/config change, paid calls or private scan. Reviewer-created synthetic cache outside scratch was not touched. Later changes limited to evidence/STATE do not change these tested code bytes; proposed catalogue pin is generated after the candidate documentation commit.
