@@ -39,6 +39,14 @@ python -m hermes_cli.main plugins validate "$NODE_SEARCH_CANDIDATE" --install-de
 
 The second command requires actual successful candidate dependency preparation under the upstream lock/core constraints; stderr, probe interpreter and preparation receipt must support that claim.
 
+At upstream 6e9b3e3b8852f12bf965f888213470574b72803e, cmd_validate calls sync_venv without explicit=True. A core-only `pm install venv` cannot satisfy the candidate-member stamp. In the isolated scratch checkout only, explicit candidate preparation through the existing PM API resolves this without policy changes:
+
+```sh
+python -c 'import os; from pathlib import Path; import pm; from pm.plugin_inputs import Candidates; pm.sync_venv(explicit=True, plugins=Candidates([Path(os.environ["NODE_SEARCH_CANDIDATE"])]))'
+```
+
+This remains an installation requiring the normal safety checker. Afterwards run --install-deps above, require empty dependency-error stderr and an ok PM receipt, verify the selected candidate environment/probe and compare core lock versions. Never apply this preparation to the running Hermes installation.
+
 ## Deterministic quality
 
 Canonical external dependency: builder-assurance skill version 1.1.0. Set `BUILDER_ASSURANCE_SKILL` to its absolute skill directory; the schema is vendored locally. Another machine must supply that version or explicitly report the missing dependency.

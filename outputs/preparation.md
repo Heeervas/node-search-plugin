@@ -1,5 +1,7 @@
 # Catalogue preparation continuation
 
+Current continuation: outputs/dependency-diagnosis.md supersedes the historical dependency-admission and supported-runtime blockers below. Actual dependency admission and Python 3.10–3.12 matrix now pass; only PyYAML 6.0 floor execution remains blocked.
+
 ## Candidate and accepted evidence
 
 Started from clean 25e73cc7a48586a6defdb0660bbd186ce929a506. Immutable baseline: 448d827ef4bdc32efe031c20bf3c315ffc91b351. Independent review result pd_20261019_110105_zas2bl accepted code findings R1/R2/R3 at 4109156b0e6bb305c4b3cb0a73fd29dc99d681fe, including TOP QUALITY_PASS, filesystem confinement and 38 tests without skips. All five source identities in verification.md were checked with sha256sum and match. No source, manifest, quality-policy or test bytes changed in this continuation. Those accepted checks are reused, not relabeled as newly executed checks.
