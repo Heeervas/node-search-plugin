@@ -1,0 +1,15 @@
+# PROPOSED ONLY: remaining installation, lint, runtime and re-review gates block submission.
+name: node-search
+repo: https://github.com/eve-ai-dev/node-search-plugin.git
+sha: 4109156b0e6bb305c4b3cb0a73fd29dc99d681fe
+description: Bounded local Markdown metadata and link-graph candidate search.
+maintainer: eve-ai-dev
+tier: community
+category: tools
+version: "0.3.1"
+readme: true
+capabilities:
+  provides_tools: [node_search]
+  provides_hooks: []
+  provides_middleware: []
+  requires_env: []
