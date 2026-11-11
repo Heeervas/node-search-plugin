@@ -55,6 +55,20 @@ hermes -p <profile> plugins enable node-search
 
 Restart the CLI/gateway after enabling because plugin discovery and tool schemas load at startup.
 
+## Run as an MCP server
+
+Run from this repository with Python 3.10+ and PyYAML (`>=6.0,<7`), the only third-party runtime dependency; neither Hermes nor an MCP SDK is required:
+
+```bash
+export NODE_SEARCH_ALLOWED_ROOTS="$HOME/notes,$HOME/work/wiki"
+export NODE_SEARCH_CACHE="$HOME/.cache/node-search/index.json"
+python3 mcp_server.py
+```
+
+Use `NODE_SEARCH_ALLOWED_ROOTS` or the legacy single-root `NODE_SEARCH_ROOT` to configure access. `NODE_SEARCH_CACHE` selects the metadata cache; optional `HERMES_HOME` supplies the default root/cache base described below. The same privacy and scope restrictions apply.
+
+The server uses stdio with newline-delimited JSON-RPC 2.0. It accepts MCP protocol versions `2025-11-25`, `2025-06-18`, `2025-03-26`, and `2024-11-05`; an unrecognized requested version negotiates `2025-11-25`. Its sole tool is `node_search`, with the identical name and input schema loaded from `__init__.py` and the same handler as the plugin. Tool results contain the handler's JSON as text; `success: false` maps to MCP `isError: true` (successful results use `isError: false`). No resources or prompts are exposed.
+
 ## Configuration
 
 Set at least one allowed Markdown root for shared/public installs:
